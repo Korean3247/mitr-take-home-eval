@@ -1,7 +1,7 @@
 # Research Engineering Intern: Take-Home Evaluation
 
-**Name:** [NAME]
-**Email:** [EMAIL]
+**Name:** Geunwoo Park
+**Email:** gpark69@wisc.edu
 **GitHub Fork:** https://github.com/Korean3247/mitr-take-home-eval
 
 ---
