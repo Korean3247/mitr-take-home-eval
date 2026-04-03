@@ -159,15 +159,32 @@ If full MITR and upper MITR show no statistically significant difference (within
 **Experiment:** Lambda sensitivity sweep for MITR-Cosine on BERT-base and RoBERTa-base, evaluating accuracy and contradiction rate across lambda in {0.001, 0.003, 0.01, 0.03, 0.1} on BoolQ.
 
 **Results Summary:**
-[TO BE FILLED AFTER COLAB EXECUTION]
 
-**Interpretation:**
-[TO BE FILLED AFTER COLAB EXECUTION]
+| Model | Condition | Accuracy | Contradiction Rate |
+|-------|-----------|----------|--------------------|
+| BERT | Baseline | 0.7013 | **0.6859** |
+| BERT | lambda=0.001 | 0.7100 | 0.6987 (+1.3%) |
+| BERT | lambda=0.003 | 0.7087 | 0.7115 (+2.6%) |
+| BERT | lambda=0.01 | **0.7120** | 0.7051 (+1.9%) |
+| BERT | lambda=0.03 | 0.7113 | 0.6923 (+0.6%) |
+| BERT | lambda=0.1 | 0.7073 | 0.7308 (+4.5%) |
+| RoBERTa | Baseline | 0.7740 | **0.6474** |
+| RoBERTa | lambda=0.001 | 0.7753 | 0.6987 (+5.1%) |
+| RoBERTa | lambda=0.003 | 0.7767 | 0.6795 (+3.2%) |
+| RoBERTa | lambda=0.01 | **0.7900** | 0.6795 (+3.2%) |
+| RoBERTa | lambda=0.03 | 0.7820 | 0.6795 (+3.2%) |
+| RoBERTa | lambda=0.1 | 0.7240 | 0.7885 (+14.1%) |
+
+**Discussion (150 words):**
+
+Our lambda sweep refutes the hypothesis that backbone-conditioned regularization strength can resolve MITR's contradiction rate degradation. Across all five lambda values tested on both BERT and RoBERTa, MITR-Cosine consistently worsens contradiction rate relative to baseline, even at the smallest lambda=0.001. This is a negative result with two important implications.
+
+First, the accuracy-consistency gap is real: MITR reliably improves accuracy (BERT best: +1.07% at lambda=0.01; RoBERTa best: +1.60% at lambda=0.01) while simultaneously degrading logical consistency. This suggests accuracy and contradiction rate are decoupled, and MI regularization on layer differences does not address the representational features responsible for logical consistency.
+
+Second, the original finding that RoBERTa-Cosine reduces contradiction rate did not replicate under controlled conditions with fixed seeds, lending empirical support to our Part A critique that single-run results without variance estimation are unreliable. The divergence between original and replicated results underscores the need for multi-seed evaluation in MITR research.
 
 ---
 
 ## Part E: Abstract (max 200 words)
 
-Mutual Information Transformer Regularization (MITR) penalizes representational redundancy between consecutive transformer layers to improve logical consistency. Prior work demonstrated modest gains on BoolQ using a fixed regularization strength (lambda=0.01) but revealed a puzzling backbone-dependent reversal: MITR improved RoBERTa's contradiction rate while worsening BERT's. We hypothesize this reversal is a tuning artifact arising from backbone-specific sensitivity to MI regularization strength. To test this, we conduct a systematic lambda sweep across {0.001, 0.003, 0.01, 0.03, 0.1} on both BERT-base and RoBERTa-base using the parameter-free Cosine MI estimator on BoolQ. Our results show that [PLACEHOLDER -- to be filled with actual numbers after Colab run]. This demonstrates that the effectiveness of inter-layer MI regularization is critically dependent on pretraining paradigm (MLM+NSP vs. MLM-only), and that backbone-conditioned lambda selection, rather than a one-size-fits-all setting, is necessary for MITR to generalize. Our findings provide practical guidelines for applying representation-level regularization across diverse transformer architectures.
-
-*(~170 words; will finalize with quantitative evidence after experiment execution)*
+Mutual Information Transformer Regularization (MITR) penalizes representational redundancy between consecutive transformer layers to improve logical consistency. Prior work demonstrated modest gains on BoolQ using a fixed regularization strength (lambda=0.01) but revealed a puzzling backbone-dependent reversal: MITR improved RoBERTa's contradiction rate while worsening BERT's. We hypothesized this reversal was a tuning artifact and conducted a systematic lambda sweep across {0.001, 0.003, 0.01, 0.03, 0.1} on both BERT-base and RoBERTa-base using the parameter-free Cosine MI estimator on BoolQ. Our results refute this hypothesis: MITR worsens contradiction rate at every lambda for both backbones, even while improving accuracy (BERT +1.07%, RoBERTa +1.60% at lambda=0.01). Notably, the original finding that RoBERTa-Cosine reduces contradiction rate did not replicate under controlled seeding, confirming that single-run evaluations are insufficient. These findings reveal a fundamental accuracy-consistency decoupling in MITR: MI regularization on layer differences improves task performance but does not address the representational features governing logical consistency. Future work should explore alternative MI targets or layer-selective application.
